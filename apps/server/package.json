@@ -1,0 +1,22 @@
+{
+  "name": "@loki/server",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "module": "./src/index.ts",
+  "scripts": {
+    "dev": "bun --watch src/index.ts",
+    "start": "bun src/index.ts",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@loki/agent-sdk": "workspace:*",
+    "@loki/db": "workspace:*",
+    "@loki/events": "workspace:*",
+    "@loki/types": "workspace:*",
+    "elysia": "^1.2.25"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.2"
+  }
+}
