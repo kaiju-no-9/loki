@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import { SpecParser, CodebaseIndexer } from "@loki/context-engine";
 import { eventBus } from "@loki/events";
 import { defaultSandboxAdapter } from "@loki/sandbox";
 import { wrapUserRequest, wrapToolResult } from "@loki/trust";
@@ -77,7 +78,26 @@ export async function runAgentLoop(
     }
   }
 
-  const systemPrompt = buildSystemPrompt({ workDir });
+  // Parse prompt via Context-Driven Development SpecParser
+  const featureSpec = SpecParser.parsePrompt(options.prompt);
+  const specMarkdown = SpecParser.formatSpecMarkdown(featureSpec);
+
+  // Generate initial codebase index from sandbox workspace
+  let codebaseContext = "";
+  try {
+    const entries = await defaultSandboxAdapter.listDir(sandboxId, workDir);
+    const index = CodebaseIndexer.generateIndexFromEntries(workDir, entries);
+    codebaseContext = index.summaryText;
+  } catch {
+    codebaseContext = "";
+  }
+
+  const systemPrompt = buildSystemPrompt({
+    workDir,
+    featureSpecMarkdown: specMarkdown,
+    codebaseContext,
+  });
+
   const messages: ChatMessage[] = [
     { role: "system", content: systemPrompt },
     { role: "user", content: wrapUserRequest(options.prompt) },
@@ -85,7 +105,7 @@ export async function runAgentLoop(
 
   emit({
     type: "agent.started",
-    message: `Loki agent loop started (model=${model}, sandbox=${sandboxId})`,
+    message: `Loki agent loop started with CDD (model=${model}, sandbox=${sandboxId})`,
   });
 
   let steps = 0;

@@ -1,5 +1,5 @@
 {
-  "name": "@loki/agent-sdk",
+  "name": "@loki/context-engine",
   "version": "0.1.0",
   "private": true,
   "main": "./src/index.ts",
@@ -9,13 +9,8 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.39.0",
-    "@loki/context-engine": "workspace:*",
-    "@loki/events": "workspace:*",
-    "@loki/sandbox": "workspace:*",
     "@loki/trust": "workspace:*",
-    "@loki/types": "workspace:*",
-    "openai": "^4.86.0"
+    "@loki/types": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.8.2"
